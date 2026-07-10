@@ -1,0 +1,18 @@
+{
+  "multipart": [
+    { "apply": {"model": "tubes:block/pneumatic_tube" }},
+    { "when": { "up":  "true"}, "apply": {"model": "tubes:block/pneumatic_tube_connection", "x": 90 }},
+    { "when": { "down":  "true"}, "apply": {"model": "tubes:block/pneumatic_tube_connection", "x": -90 }},
+    { "when": { "north":  "true"}, "apply": {"model": "tubes:block/pneumatic_tube_connection", "y": 180  }},
+    { "when": { "south":  "true"}, "apply": {"model": "tubes:block/pneumatic_tube_connection" }},
+    { "when": { "east":  "true"}, "apply": {"model": "tubes:block/pneumatic_tube_connection", "y": -90 }},
+    { "when": { "west":  "true"}, "apply": {"model": "tubes:block/pneumatic_tube_connection", "y": 90 }},
+
+    { "when": { "up":  "false"}, "apply": {"model": "tubes:block/pneumatic_tube_inner", "x": 90 }},
+    { "when": { "down":  "false"}, "apply": {"model": "tubes:block/pneumatic_tube_inner", "x": -90 }},
+    { "when": { "north":  "false"}, "apply": {"model": "tubes:block/pneumatic_tube_inner", "y": 180 }},
+    { "when": { "south":  "false"}, "apply": {"model": "tubes:block/pneumatic_tube_inner" }},
+    { "when": { "east":  "false"}, "apply": {"model": "tubes:block/pneumatic_tube_inner", "y": -90 }},
+    { "when": { "west":  "false"}, "apply": {"model": "tubes:block/pneumatic_tube_inner", "y": 90 }}
+  ]
+}

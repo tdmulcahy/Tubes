@@ -1,0 +1,13 @@
+{
+  "itemGroup.tubes": "Example Mod Tab",
+  "block.tubes.example_block": "Example Block",
+  "item.tubes.example_item": "Example Item",
+
+  "tubes.configuration.title": "Tubes Configs",
+  "tubes.configuration.section.tubes.common.toml": "Tubes Configs",
+  "tubes.configuration.section.tubes.common.toml.title": "Tubes Configs",
+  "tubes.configuration.items": "Item List",
+  "tubes.configuration.logDirtBlock": "Log Dirt Block",
+  "tubes.configuration.magicNumberIntroduction": "Magic Number Text",
+  "tubes.configuration.magicNumber": "Magic Number"
+}
