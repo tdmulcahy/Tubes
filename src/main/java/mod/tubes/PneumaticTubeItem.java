@@ -1,4 +1,4 @@
-package com.example.examplemod;
+package mod.tubes;
 
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -10,6 +10,7 @@ import net.neoforged.neoforge.common.util.ValueIOSerializable;
 
 import java.util.Optional;
 
+//TODO: Do we need to sync to the client?
 public class PneumaticTubeItem implements ValueIOSerializable {
 
   private ItemStack stack;
@@ -52,7 +53,10 @@ public class PneumaticTubeItem implements ValueIOSerializable {
     output.store("Direction", Direction.CODEC, currentDirection);
     output.putBoolean("HasPassedCenter", hasPassedCenter);
 
-    ContainerHelper.saveAllItems(output, NonNullList.of(stack));
+    NonNullList<ItemStack> items = NonNullList.create();
+    items.add(stack);
+
+    ContainerHelper.saveAllItems(output, items);
   }
 
   @Override
@@ -67,6 +71,14 @@ public class PneumaticTubeItem implements ValueIOSerializable {
 
     if (!stacks.isEmpty())
       stack = stacks.getFirst();
+  }
+
+  public boolean hasReachedHalfway() {
+    return progress >= 0.5;
+  }
+
+  public boolean hasReachedEnd() {
+    return progress >= 1.0;
   }
 
   public void setHasPassedCenter(boolean hasPassedCenter) {

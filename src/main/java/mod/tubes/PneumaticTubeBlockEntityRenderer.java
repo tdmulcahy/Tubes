@@ -1,4 +1,4 @@
-package com.example.examplemod;
+package mod.tubes;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -43,21 +44,12 @@ public class PneumaticTubeBlockEntityRenderer implements BlockEntityRenderer<Pne
 
       state.addItemRenderState(renderState);
     }
-
   }
 
   @Override
   public void submit(PneumaticTubeBlockEntityRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
-    // PneumaticTube pt = be.getPneumaticTube();
 
     poseStack.pushPose();
-    // poseStack.translate(0.5, 0.5, 0.5);
-
-//    for (TubeItem item : pt.getItems()) {
-//      float x = Mth.lerp(partialTicks, item.getLastProgress(), item.getProgress());
-//      poseStack.translate(x, 0, 0);
-//      Minecraft.getInstance().getItemRenderer().renderStatic(item.getStack(), ItemTransforms.TransformType.GROUND, combinedLight, combinedOverlay, stack, bufferSource, 0);
-//    }
 
     for (PneumaticTubeBlockEntityRenderState.TubeItemStackRenderState itemStackRenderState : state.getItemStackRenderStateList()) {
       poseStack.pushPose();
@@ -65,32 +57,32 @@ public class PneumaticTubeBlockEntityRenderer implements BlockEntityRenderer<Pne
       Direction direction = itemStackRenderState.getTubeItem().getCurrentDirection();
       float lastProgress = itemStackRenderState.getTubeItem().getLastProgress();
       float progress = itemStackRenderState.getTubeItem().getProgress();
-      float lerp = Mth.lerp(state.getPartialTicks(), lastProgress, progress);
+      float interpolatedProgress = Mth.lerp(state.getPartialTicks(), lastProgress, progress);
 
       float x = 0.5f;
       if (direction.getStepX() == -1) {
-        x = 1.0f + (direction.getStepX() * lerp);
+        x = 1.0f + (direction.getStepX() * interpolatedProgress);
       } else if (direction.getStepX() == 1) {
-        x = (direction.getStepX() * lerp);
+        x = (direction.getStepX() * interpolatedProgress);
       }
 
       float y = 0.5f;
       if (direction.getStepY() == -1) {
-        y = 1.0f + (direction.getStepY() * lerp);
+        y = 1.0f + (direction.getStepY() * interpolatedProgress);
       } else if (direction.getStepY() == 1) {
-        y = (direction.getStepY() * lerp);
+        y = (direction.getStepY() * interpolatedProgress);
       }
 
       float z = 0.5f;
       if (direction.getStepZ() == -1) {
-        z = 1.0f + (direction.getStepZ() * lerp);
+        z = 1.0f + (direction.getStepZ() * interpolatedProgress);
       } else if (direction.getStepZ() == 1) {
-        z = (direction.getStepZ() * lerp);
+        z = (direction.getStepZ() * interpolatedProgress);
       }
 
       poseStack.translate(x, y, z);
       poseStack.scale(0.3f, 0.3f, 0.3f);
-      itemStackRenderState.submit(poseStack, submitNodeCollector, state.lightCoords, 0, 0);
+      itemStackRenderState.submit(poseStack, submitNodeCollector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
 
       poseStack.popPose();
 

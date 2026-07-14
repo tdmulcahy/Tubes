@@ -1,4 +1,4 @@
-package com.example.examplemod;
+package mod.tubes;
 
 
 import net.minecraft.core.BlockPos;
