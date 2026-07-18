@@ -1,5 +1,7 @@
-package mod.tubes;
+package mod.tubes.client.renderer.blockentity.state;
 
+import mod.tubes.tube.PneumaticTubeItem;
+import mod.tubes.block.entity.PneumaticTubeBlockEntity;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 

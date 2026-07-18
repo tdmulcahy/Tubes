@@ -1,0 +1,19 @@
+{
+	"parent": "block/cube",
+	"display": {
+		"firstperson_righthand": {
+			"rotation": [ 0, 135, 0 ],
+			"translation": [ 0, 0, 0 ],
+			"scale": [ 0.40, 0.40, 0.40 ]
+		}
+	},
+	"textures": {
+		"particle": "tubes:block/ejector_side",
+		"down": "tubes:block/ejector_bottom",
+		"up": "tubes:block/ejector_top",
+		"north": "tubes:block/ejector_side_on",
+		"east": "tubes:block/ejector_side_on",
+		"south": "tubes:block/ejector_side_on",
+		"west": "tubes:block/ejector_side_on"
+	}
+}

@@ -1,5 +1,11 @@
-package mod.tubes;
+package mod.tubes.block.entity;
 
+import mod.tubes.ContainerUtils;
+import mod.tubes.tube.PneumaticTubeItem;
+import mod.tubes.PneumaticTubes;
+import mod.tubes.payload.PneumaticItemAddPayload;
+import mod.tubes.payload.PneumaticItemRemovePayload;
+import mod.tubes.payload.PneumaticItemSyncPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -8,6 +14,7 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -15,6 +22,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.*;
 
@@ -29,15 +37,37 @@ public class PneumaticTubeBlockEntity extends BlockEntity {
   }
 
   public void addTubeItem(PneumaticTubeItem tubeItem) {
+
+    if (level != null && level.isClientSide()) return;
+
     items.add(tubeItem);
+
+    sendAddTubeItem(tubeItem);
 
     setChanged();
   }
 
   public void addTubeItemAndReset(PneumaticTubeItem tubeItem) {
-    addTubeItem(tubeItem);
+
+    if (level != null && level.isClientSide()) return;
 
     tubeItem.resetProgress();
+
+    addTubeItem(tubeItem);
+  }
+
+  public void addTubeItemClient(PneumaticTubeItem tubeItem) {
+
+    if (level != null && !level.isClientSide()) return;
+
+    items.add(tubeItem);
+  }
+
+  public void removeTubeItemClient(PneumaticTubeItem tubeItem) {
+
+    if (level != null && !level.isClientSide()) return;
+
+    items.remove(tubeItem);
   }
 
   private List<Direction> getAvailableDirections() {
@@ -57,14 +87,63 @@ public class PneumaticTubeBlockEntity extends BlockEntity {
     return directions;
   }
 
-  private Optional<BlockEntity> getBlockEntityForDirection(PneumaticTubeItem tubeItem) {
+  private Optional<BlockEntity> getBlockEntityForDirection(Direction direction) {
 
     if (level == null) {
       return Optional.empty();
     }
 
-    BlockPos offsetPos = getBlockPos().relative(tubeItem.getCurrentDirection());
+    BlockPos offsetPos = getBlockPos().relative(direction);
     return Optional.ofNullable(level.getBlockEntity(offsetPos));
+  }
+
+  private void sendSyncTubeItem(PneumaticTubeItem tubeItem) {
+
+    PacketDistributor.sendToAllPlayers(
+            new PneumaticItemSyncPayload(
+                    getBlockPos().getX(),
+                    getBlockPos().getY(),
+                    getBlockPos().getZ(),
+                    tubeItem.getId(),
+                    tubeItem.getProgress(),
+                    tubeItem.getCurrentDirection().ordinal()
+            )
+    );
+  }
+
+  private void sendAddTubeItem(PneumaticTubeItem tubeItem) {
+
+    PacketDistributor.sendToAllPlayers(
+            new PneumaticItemAddPayload(
+                    getBlockPos().getX(),
+                    getBlockPos().getY(),
+                    getBlockPos().getZ(),
+                    tubeItem.getId(),
+                    tubeItem.getStack(),
+                    tubeItem.getProgress(),
+                    tubeItem.getCurrentDirection().ordinal()
+            )
+    );
+  }
+
+  private void sendRemoveTubeItem(PneumaticTubeItem tubeItem) {
+
+    if (level != null && level.isClientSide()) return;
+
+    PacketDistributor.sendToPlayersNear(
+            (ServerLevel) level,
+            null,
+            getBlockPos().getX(),
+            getBlockPos().getY(),
+            getBlockPos().getZ(),
+            64,
+            new PneumaticItemRemovePayload(
+                    getBlockPos().getX(),
+                    getBlockPos().getY(),
+                    getBlockPos().getZ(),
+                    tubeItem.getId()
+            )
+    );
   }
 
   private void handleItemHalfway(List<Direction> availableDirections, PneumaticTubeItem tubeItem) {
@@ -79,11 +158,13 @@ public class PneumaticTubeBlockEntity extends BlockEntity {
     // TODO: Combine once more complicated routing it available.
     tubeItem.setCurrentDirection(nextDirection);
     tubeItem.setHasPassedCenter(true);
+
+    // sendSyncTubeItem(tubeItem);
   }
 
   private boolean handleItemReachedEnd(PneumaticTubeItem tubeItem) {
 
-    Optional<BlockEntity> nextBlockEntity = getBlockEntityForDirection(tubeItem);
+    Optional<BlockEntity> nextBlockEntity = getBlockEntityForDirection(tubeItem.getCurrentDirection());
     if (nextBlockEntity.isPresent()) {
 
       if (nextBlockEntity.get() instanceof PneumaticTubeBlockEntity tubeBlockEntity) {
@@ -98,6 +179,23 @@ public class PneumaticTubeBlockEntity extends BlockEntity {
     return true;
   }
 
+  private void updateClient() {
+
+    List<Direction> availableDirections = getAvailableDirections();
+
+    // Don't update items with nowhere to go.
+    if (availableDirections.isEmpty()) return;
+
+    for (PneumaticTubeItem tubeItem : items) {
+      tubeItem.update();
+
+      // Halfway point, decide on direction.
+      if (tubeItem.hasReachedHalfway() && !tubeItem.hasPassedCenter()) {
+        handleItemHalfway(availableDirections, tubeItem);
+      }
+    }
+  }
+
   private void update() {
 
     List<Direction> availableDirections = getAvailableDirections();
@@ -110,6 +208,8 @@ public class PneumaticTubeBlockEntity extends BlockEntity {
       PneumaticTubeItem tubeItem = iterator.next();
       tubeItem.update();
 
+      if (level != null && level.isClientSide()) continue;
+
       // Halfway point, decide on direction.
       if (tubeItem.hasReachedHalfway() && !tubeItem.hasPassedCenter()) {
         handleItemHalfway(availableDirections, tubeItem);
@@ -118,8 +218,19 @@ public class PneumaticTubeBlockEntity extends BlockEntity {
       // Item has reached the end of the tube.
       if (tubeItem.hasReachedEnd()) {
         if (handleItemReachedEnd(tubeItem)) {
+
+          sendRemoveTubeItem(tubeItem);
+
           iterator.remove();
+
           setChanged();
+        } else {
+
+          // If the item wasn't removed then send it back.
+          tubeItem.setCurrentDirection(tubeItem.getCurrentDirection().getOpposite());
+          tubeItem.resetProgress();
+
+          sendSyncTubeItem(tubeItem);
         }
       }
     }
@@ -159,7 +270,14 @@ public class PneumaticTubeBlockEntity extends BlockEntity {
   }
 
   public static <T extends BlockEntity> void tick(Level level, BlockPos blockPos, BlockState blockState, T t) {
-    if (t instanceof PneumaticTubeBlockEntity be) be.update();
+    if (t instanceof PneumaticTubeBlockEntity be) {
+
+      if (level.isClientSide()) {
+        be.updateClient();
+      } else {
+        be.update();
+      }
+    }
   }
 
   @Override

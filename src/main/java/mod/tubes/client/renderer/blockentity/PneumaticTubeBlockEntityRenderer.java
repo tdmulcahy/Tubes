@@ -1,6 +1,9 @@
-package mod.tubes;
+package mod.tubes.client.renderer.blockentity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import mod.tubes.client.renderer.blockentity.state.PneumaticTubeBlockEntityRenderState;
+import mod.tubes.tube.PneumaticTubeItem;
+import mod.tubes.block.entity.PneumaticTubeBlockEntity;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -49,8 +52,6 @@ public class PneumaticTubeBlockEntityRenderer implements BlockEntityRenderer<Pne
   @Override
   public void submit(PneumaticTubeBlockEntityRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
 
-    poseStack.pushPose();
-
     for (PneumaticTubeBlockEntityRenderState.TubeItemStackRenderState itemStackRenderState : state.getItemStackRenderStateList()) {
       poseStack.pushPose();
 
@@ -85,9 +86,6 @@ public class PneumaticTubeBlockEntityRenderer implements BlockEntityRenderer<Pne
       itemStackRenderState.submit(poseStack, submitNodeCollector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
 
       poseStack.popPose();
-
     }
-
-    poseStack.popPose();
   }
 }

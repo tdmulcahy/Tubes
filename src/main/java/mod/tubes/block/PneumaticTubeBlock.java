@@ -1,6 +1,9 @@
-package mod.tubes;
+package mod.tubes.block;
 
 
+import mod.tubes.block.entity.PneumaticTubeBlockEntity;
+import mod.tubes.tube.PneumaticTubeItem;
+import mod.tubes.PneumaticTubes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -77,7 +80,9 @@ public class PneumaticTubeBlock extends Block implements EntityBlock {
     BlockEntity blockEntity = level.getBlockEntity(pos);
     if (blockEntity instanceof PneumaticTubeBlockEntity pneumaticTubeBlockEntity) {
 
-      pneumaticTubeBlockEntity.addTubeItem(new PneumaticTubeItem(itemStack.copy(), 0.5F));
+      PneumaticTubeItem tubeItem = new PneumaticTubeItem(itemStack.copy());
+      tubeItem.setProgress(0.5f);
+      pneumaticTubeBlockEntity.addTubeItem(tubeItem);
     }
 
     return InteractionResult.PASS;

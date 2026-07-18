@@ -1,0 +1,50 @@
+{
+  "variants": {
+    "facing=east,powered=false": {
+      "model": "tubes:block/ejector",
+      "y": 90
+    },
+    "facing=east,powered=true": {
+      "model": "tubes:block/ejector_on",
+      "y": 90
+    },
+    "facing=north,powered=false": {
+      "model": "tubes:block/ejector"
+    },
+    "facing=north,powered=true": {
+      "model": "tubes:block/ejector_on"
+    },
+    "facing=south,powered=false": {
+      "model": "tubes:block/ejector",
+      "y": 180
+    },
+    "facing=south,powered=true": {
+      "model": "tubes:block/ejector_on",
+      "y": 180
+    },
+    "facing=west,powered=false": {
+      "model": "tubes:block/ejector",
+      "y": 270
+    },
+    "facing=west,powered=true": {
+      "model": "tubes:block/ejector_on",
+      "y": 270
+    },
+    "facing=down,powered=false": {
+      "model": "tubes:block/ejector",
+      "y": 270
+    },
+    "facing=down,powered=true": {
+      "model": "tubes:block/ejector_on",
+      "y": 270
+    },
+    "facing=up,powered=false": {
+      "model": "tubes:block/ejector",
+      "y": 270
+    },
+    "facing=up,powered=true": {
+      "model": "tubes:block/ejector_on",
+      "y": 270
+    }
+  }
+}
