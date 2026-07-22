@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class EjectorBlock extends Block implements EntityBlock {
 
-  private static final EnumProperty<Direction> DIRECTION = EnumProperty.create("facing", Direction.class);
+  private static final EnumProperty<Direction> DIRECTION = EnumProperty.create("direction", Direction.class);
   private static final BooleanProperty POWERED = BooleanProperty.create("powered");
 
   public EjectorBlock(Identifier registryName) {
@@ -34,6 +34,14 @@ public class EjectorBlock extends Block implements EntityBlock {
 
   public BlockState getStateForPlacement(BlockPlaceContext context) {
     return this.defaultBlockState().setValue(DIRECTION, context.getClickedFace().getOpposite());
+  }
+
+  protected BlockState rotate(BlockState state, Rotation rotation) {
+    return state.setValue(DIRECTION, rotation.rotate(state.getValue(DIRECTION)));
+  }
+
+  protected BlockState mirror(BlockState state, Mirror mirror) {
+    return state.rotate(mirror.getRotation(state.getValue(DIRECTION)));
   }
 
   @Override

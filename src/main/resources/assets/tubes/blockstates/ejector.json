@@ -1,48 +1,48 @@
 {
   "variants": {
-    "facing=east,powered=false": {
+    "direction=east,powered=false": {
       "model": "tubes:block/ejector",
       "y": 90
     },
-    "facing=east,powered=true": {
+    "direction=east,powered=true": {
       "model": "tubes:block/ejector_on",
       "y": 90
     },
-    "facing=north,powered=false": {
+    "direction=north,powered=false": {
       "model": "tubes:block/ejector"
     },
-    "facing=north,powered=true": {
+    "direction=north,powered=true": {
       "model": "tubes:block/ejector_on"
     },
-    "facing=south,powered=false": {
+    "direction=south,powered=false": {
       "model": "tubes:block/ejector",
       "y": 180
     },
-    "facing=south,powered=true": {
+    "direction=south,powered=true": {
       "model": "tubes:block/ejector_on",
       "y": 180
     },
-    "facing=west,powered=false": {
+    "direction=west,powered=false": {
       "model": "tubes:block/ejector",
       "y": 270
     },
-    "facing=west,powered=true": {
+    "direction=west,powered=true": {
       "model": "tubes:block/ejector_on",
       "y": 270
     },
-    "facing=down,powered=false": {
+    "direction=down,powered=false": {
       "model": "tubes:block/ejector",
       "y": 270
     },
-    "facing=down,powered=true": {
+    "direction=down,powered=true": {
       "model": "tubes:block/ejector_on",
       "y": 270
     },
-    "facing=up,powered=false": {
+    "direction=up,powered=false": {
       "model": "tubes:block/ejector",
       "y": 270
     },
-    "facing=up,powered=true": {
+    "direction=up,powered=true": {
       "model": "tubes:block/ejector_on",
       "y": 270
     }
